@@ -15,18 +15,15 @@ import java.math.BigDecimal;
 @Service
 @AllArgsConstructor
 public class KafkaService {
-    private final BankAccountRepository bankAccountRepository;
 
-    @KafkaListener(topics = "${tpd.topic-name}")
-    public void listen(UserDTO user) {
-        createBankAccountForUser(UserMapper.fromDTO(user));
-    }
+  private final BankAccountService bankAccountService;
 
-    private void createBankAccountForUser(User user) {
-        BankAccount bankAccount = new BankAccount();
-        bankAccount.setOwner(user);
-        bankAccount.setBalance(new BigDecimal("0.0"));
-        bankAccountRepository.save(bankAccount);
-    }
+  @KafkaListener(topics = "${tpd.topic-name}", groupId = "bankAccount")
+  public void listen(UserDTO user) {
+
+    bankAccountService.createBankAccountForUser(UserMapper.fromDTO(user)
+    );
+  }
+
 
 }
